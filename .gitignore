@@ -1,0 +1,49 @@
+# 🛑 Node Modules (Never Commit This)
+node_modules/
+package-lock.json
+
+# 🛑 Environment Variables (Sensitive Data)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# 🛑 Build & Compiled Files
+dist/
+build/
+out/
+
+# 🛑 TypeScript Compilation Output
+*.js
+*.js.map
+*.d.ts
+
+# 🛑 Logs & Debug Files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 🛑 Database Files (Prevent Local DB from Being Committed)
+database.sqlite
+*.sqlite3
+dump.sql
+
+# 🛑 System & Editor Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# 🛑 Coverage Reports (for Testing)
+coverage/
+.nyc_output/
+
+# 🛑 Miscellaneous
+tmp/
+temp/

@@ -14,6 +14,8 @@ import { errorHandler } from './middlewares/errorMiddleware';
 
 // Example route aggregator
 import apiRoutes from './routes';
+import authRouter from './routes/auth.routes';
+import uploadRouter from './routes/fileUpload.routes';
 
 const app = express();
 
@@ -38,6 +40,8 @@ app.get('/test-db', async (req, res) => {
 
 // ✅ Mount your API routes, e.g. /api/citizens, /api/users, etc.
 app.use('/api', apiRoutes);
+app.use('/api/auth', authRouter);
+app.use('/api/uploads', uploadRouter);
 
 // ✅ Use your error handler middleware last
 app.use(errorHandler);

@@ -1,7 +1,7 @@
 /****************************************************************************
  * votePreference.service.ts
  * Bya3mel manage la table: citizen_vote_preference
- * khass b Parliamentary, Municipal, or Mukhtar elections, etc.
+ * khassa bl Parliamentary, Municipal, or Mukhtar elections, etc.
  ****************************************************************************/
 import pool from '../config/db';
 
@@ -83,7 +83,7 @@ export async function upsertVotePreference(data: VotePreferenceInput) {
   return res.rows[0].vote_preference_id;
 }
 
-// getPreferencesByCitizen => nji b citizen_id w ngeb kil preferences
+// getPreferencesByCitizen => mnkhod id el citizen w mnshuf lpreference
 export async function getPreferencesByCitizen(citizenId: number) {
   const sql = `
     SELECT cvp.*,

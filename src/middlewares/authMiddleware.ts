@@ -1,40 +1,43 @@
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+// src/middlewares/authMiddleware.ts
 
-dotenv.config();
+import { RequestHandler } from 'express';
+import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || "a3f1b2c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2";
+const JWT_SECRET = process.env.JWT_SECRET || 'fallbackSecret';
 
-// ✅ Define Authenticated Request Type
-interface AuthRequest extends Request {
-    user?: { user_id: number; role: string };
-}
+// authenticateUser => checks token
+export const authenticateUser: RequestHandler = (req, res, next) => {
+  try {
+    const header = req.headers.authorization;
+    if (!header) {
+      // We do NOT `return res.status()...`, we just call res.status() then return;
+      res.status(401).json({ error: 'No auth token' });
+      return; 
+    }
 
-// ✅ Authenticate User Middleware
-export const authenticateUser = (req: AuthRequest, res: Response, next: NextFunction): void => {
-    const token = req.header("Authorization")?.split(" ")[1];
+    const token = header.split(' ')[1]; // Bearer <token>
     if (!token) {
-        res.status(401).json({ error: "Access Denied. No Token Provided." });
-        return;
+      res.status(401).json({ error: 'Malformed token' });
+      return;
     }
 
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { user_id: number; role: string };
-        req.user = decoded;
-        next();
-    } catch (err) {
-        res.status(401).json({ error: "Invalid Token" });
-    }
+    const payload = jwt.verify(token, JWT_SECRET) as { userId: number; role: string };
+    (req as any).user = payload; // attach user
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
 };
 
-// ✅ Authorize Role Middleware
-export const authorizeRole = (roles: string[]) => {
-    return (req: AuthRequest, res: Response, next: NextFunction): void => {
-        if (!req.user || !roles.includes(req.user.role)) {
-            res.status(403).json({ error: "Access Forbidden" });
-            return;
-        }
-        next();
-    };
-};
+// authorizeRole => checks user.role is in allowed list
+export function authorizeRole(roles: string[]): RequestHandler {
+  return (req, res, next) => {
+    const user = (req as any).user;
+    if (!user || !roles.includes(user.role)) {
+      res.status(403).json({ error: 'Forbidden: insufficient role' });
+      return;
+    }
+    // success
+    next();
+  };
+}

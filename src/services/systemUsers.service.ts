@@ -1,6 +1,6 @@
 /****************************************************************************
  * systemUsers.service.ts
- * Houni binstakhdem table system_users (akhadt mow9ef min 'System_User' 3al as base)
+ * hon aam naamol el ashkhas li aandon access admin, delegate ...
  ****************************************************************************/
 import pool from '../config/db';
 import bcrypt from 'bcrypt';
@@ -14,7 +14,7 @@ export interface UserInput {
   role?: string;     // e.g. 'admin', 'delegate', ...
 }
 
-// createSystemUser => Insert fi system_users
+// createSystemUser => Insert bl system_users
 export async function createSystemUser(data: UserInput) {
   const hashed = await bcrypt.hash(data.password, 10);
 
@@ -37,7 +37,7 @@ export async function createSystemUser(data: UserInput) {
   return res.rows[0].user_id;
 }
 
-// authenticateUser => b3mel SELECT by email, w bcrypt.compare 3ashan check password
+// authenticateUser => baamel SELECT by email, w bcrypt.compare kermel check password
 export async function authenticateUser(email: string, plainPassword: string) {
   const userRes = await pool.query(
     'SELECT * FROM system_users WHERE user_email = $1',

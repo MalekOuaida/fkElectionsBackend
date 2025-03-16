@@ -19,4 +19,3 @@ export async function getAllMukhtars() {
   return res.rows;
 }
 
-// And you can do updateMukhtar, deleteMukhtar, etc. if needed

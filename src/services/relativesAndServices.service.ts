@@ -1,7 +1,7 @@
 /****************************************************************************
  * relativesAndServices.service.ts
- * B yetsarraf ma tables: relatives_details + citizens_services
- * CRM style, 3andek family members w services provided
+ * byetsarraf ma tables: relatives_details + citizens_services
+ * CRM style, aandak family members w services provided
  ****************************************************************************/
 import pool from '../config/db';
 
@@ -15,7 +15,7 @@ export interface RelativeInput {
   maritalStatusId?: number;
 }
 
-// createRelative => y3abi relatives_details
+// createRelative => men aabi el relatives_details
 export async function createRelative(data: RelativeInput) {
   const sql = `
     INSERT INTO relatives_details (
@@ -41,7 +41,7 @@ export async function createRelative(data: RelativeInput) {
   return res.rows[0].relatives_details_id;
 }
 
-/** CITIZENS_SERVICES => y2ayyed service be3mel hal citizen or relative. */
+/** CITIZENS_SERVICES => y2ayyed el service yalli aam tenaamal la hal citizen or relative. */
 export interface CitizenServiceInput {
   citizensGovId: number;
   relativeService?: boolean;
@@ -51,7 +51,7 @@ export interface CitizenServiceInput {
   serviceDescription?: string;
 }
 
-// createCitizenService => insert fi citizens_services
+// createCitizenService => insert baaleb citizens_services
 export async function createCitizenService(data: CitizenServiceInput) {
   const sql = `
     INSERT INTO citizens_services (
@@ -77,7 +77,7 @@ export async function createCitizenService(data: CitizenServiceInput) {
   return res.rows[0].citizens_services_id;
 }
 
-// getServicesForCitizen => jam3 kil services men citizens_services by citizens_gov_id
+// getServicesForCitizen => jame3 kel lservices men citizens_services by citizens_gov_id
 export async function getServicesForCitizen(citizensGovId: number) {
   const sql = `
     SELECT cs.*,

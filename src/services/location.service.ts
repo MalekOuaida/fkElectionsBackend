@@ -1,6 +1,6 @@
 /****************************************************************************
  * location.service.ts
- * Hada l file be3mel CRUD / findOrCreate 3a governorate, district, municipality
+ * Hada el file byaamol CRUD / findOrCreate 3a governorate, district, municipality
  ****************************************************************************/
 import pool from '../config/db';
 
@@ -11,7 +11,7 @@ export async function createGovernorate(name: string) {
   return result.rows[0].governorate_id;
 }
 
-// createDistrict => Insert fi 'district' w link to governorate
+// createDistrict => Insert bl 'district' w link to governorate
 export async function createDistrict(name: string, governorateId: number) {
   const sql = `
     INSERT INTO district (district_name, governorate_id)
@@ -22,7 +22,7 @@ export async function createDistrict(name: string, governorateId: number) {
   return result.rows[0].district_id;
 }
 
-// createMunicipality => Insert fi 'municipality' w link to district
+// createMunicipality => Insert bl 'municipality' w link to district
 export async function createMunicipality(name: string, districtId: number) {
   const sql = `
     INSERT INTO municipality (municipality_name, district_id)
@@ -46,8 +46,8 @@ export async function findOrCreateMunicipality(name: string, districtId: number)
   return res.rows[0].municipality_id;
 }
 
-/** getMunicipalityDetails => nji men municipality_id, 
- *  we do join 3a district w governorate so n3aref kil shi
+/** getMunicipalityDetails => byeji men municipality_id, 
+ *  we do join 3a district w governorate la naaerf kel shi
  */
 export async function getMunicipalityDetails(municipalityId: number) {
   const sql = `

@@ -1,7 +1,7 @@
 /****************************************************************************
  * serviceType.service.ts
- * Hada l file yetsarraf ma table 'Service_Type' la Citizens_Services
- * 3ashan law 3anna types zay "Financial Aid", "Medical", "Academic", etc.
+ * hayda lfile byshteghel aala 'Service_Type' la Citizens_Services
+ * mechen ltypes metel "Financial Aid", "Medical", "Academic", etc.
  ****************************************************************************/
 import pool from '../config/db';
 
@@ -9,7 +9,7 @@ export interface ServiceTypeInput {
   serviceTypeName: string; // e.g. "Financial Aid"
 }
 
-// createServiceType => Insert row fi service_type
+// createServiceType => Insert row bl service_type
 export async function createServiceType(data: ServiceTypeInput) {
   const sql = `
     INSERT INTO service_type (service_type_name)
@@ -45,7 +45,7 @@ export async function updateServiceType(serviceTypeId: number, newName: string) 
   return res.rows[0] || null;
 }
 
-// deleteServiceType => b3mel DELETE men table service_type
+// deleteServiceType => baamel DELETE men table service_type
 export async function deleteServiceType(serviceTypeId: number) {
   const sql = `
     DELETE FROM service_type

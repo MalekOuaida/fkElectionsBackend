@@ -20,7 +20,7 @@ export async function getAllLists() {
   return res.rows;
 }
 
-// createCandidate => Insert fi list_candidates
+// createCandidate => Insert bi list_candidates
 export async function createCandidate(listId: number, candidateId: number, candidateName: string) {
   const sql = `
     INSERT INTO list_candidates (list_id, candidate_id, candidate_name)

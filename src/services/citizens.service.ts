@@ -1,12 +1,12 @@
 /****************************************************************************
  * citizens.service.ts
- * Hada l file be3mel el CRUD w advanced search 3ala table 'citizens_gov'.
- * Benstakhdem pg Pool men db/index.ts.
+ * Hada el file byaamel el CRUD w advanced search 3ala table 'citizens_gov'.
+ * mnestaamol pg Pool men db/index.ts.
  ****************************************************************************/
 import pool from '../config/db';
 import { QueryResult } from 'pg';
 
-// Hada interface la input: kif baddna n3abbi el record fil 'citizens_gov'
+// Hada interface la input: kif baddna n3abbi el record bi 'citizens_gov'
 export interface CitizenInput {
   firstName: string;
   lastName: string;
@@ -20,7 +20,7 @@ export interface CitizenInput {
   municipalityId?: number;
 }
 
-// createCitizen => be3mel INSERT fi citizens_gov
+// createCitizen => be3mel INSERT bi citizens_gov
 export async function createCitizen(data: CitizenInput) {
   const sql = `
     INSERT INTO citizens_gov (
@@ -48,14 +48,14 @@ export async function createCitizen(data: CitizenInput) {
   return result.rows[0].citizens_gov_id;
 }
 
-// getCitizenById => barde bi SELECT * men citizens_gov
+// getCitizenById => badal men SELECT * men citizens_gov
 export async function getCitizenById(citizenId: number) {
   const sql = 'SELECT * FROM citizens_gov WHERE citizens_gov_id = $1';
   const result = await pool.query(sql, [citizenId]);
   return result.rows[0] || null;
 }
 
-// updateCitizen => partial update 3ala row fi citizens_gov
+// updateCitizen => partial update 3ala row bi citizens_gov
 export async function updateCitizen(citizenId: number, data: Partial<CitizenInput>) {
   const setClauses: string[] = [];
   const values: any[] = [];

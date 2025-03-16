@@ -1,7 +1,7 @@
 /****************************************************************************
  * citizenAttrib.service.ts
- * Hada l file byetkallem 3an table 'citizen_attrib' 
- * li fiyo info zay blood_type_id, marital_status_id, mobile_number, etc.
+ * Hayda el file byhki 3an table 'citizen_attrib' 
+ * li fiyo info metel blood_type_id, marital_status_id, mobile_number, etc.
  ****************************************************************************/
 import pool from '../config/db';
 
@@ -23,7 +23,7 @@ export interface CitizenAttribInput {
   mukhId?: number;
 }
 
-// createCitizenAttrib => y3abi l extra info ba3d ma ykoon 3anna citizen fi citizens_gov
+// createCitizenAttrib => hon mn aabe l extra info ba3d ma ykoon 3anna citizen bi table citizens_gov
 export async function createCitizenAttrib(data: CitizenAttribInput) {
   const sql = `
     INSERT INTO citizen_attrib (

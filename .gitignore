@@ -47,3 +47,4 @@ coverage/
 # 🛑 Miscellaneous
 tmp/
 temp/
+.gitignore

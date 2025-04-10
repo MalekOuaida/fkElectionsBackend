@@ -1,7 +1,6 @@
 // src/routes/index.ts
 import { Router } from 'express';
 
-// Import all your route modules:
 import citizensRouter from './citizens.routes';
 import citizenAttribRouter from './citizenAttrib.routes';
 import locationRouter from './location.routes';
@@ -16,11 +15,9 @@ import mukhtarRouter from './mukhtar.routes';
 import addressRouter from './address.routes';
 import serviceTypeRouter from './serviceType.routes';
 import serviceStatusRouter from './serviceStatus.routes';
-// ... plus any others you have
 
 const router = Router();
 
-// Mount them under whichever API paths you like
 router.use('/citizens', citizensRouter);
 router.use('/citizen-attrib', citizenAttribRouter);
 router.use('/location', locationRouter);

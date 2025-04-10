@@ -4,6 +4,7 @@
 import { RequestHandler } from 'express';
 import * as citizensService from '../services/citizens.service';
 
+// CREATE
 export const createCitizenController: RequestHandler = async (req, res, next) => {
   try {
     const newId = await citizensService.createCitizen(req.body);
@@ -13,6 +14,17 @@ export const createCitizenController: RequestHandler = async (req, res, next) =>
   }
 };
 
+// READ ALL (NEW)
+export const getAllCitizensController: RequestHandler = async (req, res, next) => {
+  try {
+    const allCitizens = await citizensService.getAllCitizens();
+    res.json(allCitizens);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// READ ONE
 export const getCitizenByIdController: RequestHandler = async (req, res, next) => {
   try {
     const citizenId = Number(req.params.id);
@@ -27,6 +39,7 @@ export const getCitizenByIdController: RequestHandler = async (req, res, next) =
   }
 };
 
+// UPDATE
 export const updateCitizenController: RequestHandler = async (req, res, next) => {
   try {
     const citizenId = Number(req.params.id);
@@ -41,6 +54,7 @@ export const updateCitizenController: RequestHandler = async (req, res, next) =>
   }
 };
 
+// DELETE
 export const deleteCitizenController: RequestHandler = async (req, res, next) => {
   try {
     const citizenId = Number(req.params.id);
@@ -51,6 +65,7 @@ export const deleteCitizenController: RequestHandler = async (req, res, next) =>
   }
 };
 
+// SEARCH
 export const searchCitizensController: RequestHandler = async (req, res, next) => {
   try {
     const filters = {
@@ -67,4 +82,3 @@ export const searchCitizensController: RequestHandler = async (req, res, next) =
     next(err);
   }
 };
-

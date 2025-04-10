@@ -1,12 +1,10 @@
 /****************************************************************************
  * citizens.service.ts
- * Hada el file byaamel el CRUD w advanced search 3ala table 'citizens_gov'.
- * mnestaamol pg Pool men db/index.ts.
+ * File handles CRUD + advanced search on the 'citizens_gov' table using pg Pool.
  ****************************************************************************/
 import pool from '../config/db';
 import { QueryResult } from 'pg';
 
-// Hada interface la input: kif baddna n3abbi el record bi 'citizens_gov'
 export interface CitizenInput {
   firstName: string;
   lastName: string;
@@ -20,7 +18,7 @@ export interface CitizenInput {
   municipalityId?: number;
 }
 
-// createCitizen => be3mel INSERT bi citizens_gov
+// CREATE: Insert a record
 export async function createCitizen(data: CitizenInput) {
   const sql = `
     INSERT INTO citizens_gov (
@@ -48,14 +46,25 @@ export async function createCitizen(data: CitizenInput) {
   return result.rows[0].citizens_gov_id;
 }
 
-// getCitizenById => badal men SELECT * men citizens_gov
+// READ: Get a single record by ID
 export async function getCitizenById(citizenId: number) {
   const sql = 'SELECT * FROM citizens_gov WHERE citizens_gov_id = $1';
   const result = await pool.query(sql, [citizenId]);
   return result.rows[0] || null;
 }
 
-// updateCitizen => partial update 3ala row bi citizens_gov
+// READ ALL: Get all citizens (added per your request)
+export async function getAllCitizens() {
+  const sql = `
+    SELECT *
+    FROM citizens_gov
+    ORDER BY citizens_gov_id DESC
+  `;
+  const result = await pool.query(sql);
+  return result.rows; // array of all citizens
+}
+
+// UPDATE: Partial update on a record
 export async function updateCitizen(citizenId: number, data: Partial<CitizenInput>) {
   const setClauses: string[] = [];
   const values: any[] = [];
@@ -113,7 +122,7 @@ export async function updateCitizen(citizenId: number, data: Partial<CitizenInpu
   }
 
   if (!setClauses.length) {
-    return null; // ma fi updates
+    return null; // no updates
   }
 
   const sql = `
@@ -128,16 +137,13 @@ export async function updateCitizen(citizenId: number, data: Partial<CitizenInpu
   return result.rows[0] || null;
 }
 
-// deleteCitizen => be3mel DELETE men citizens_gov
+// DELETE: remove a record
 export async function deleteCitizen(citizenId: number) {
   await pool.query('DELETE FROM citizens_gov WHERE citizens_gov_id = $1', [citizenId]);
   return true;
 }
 
-/** 
- * searchCitizens => advanced search 3an l citizens,
- * possible filters: firstName, lastName, regNumber, municipalityName, districtName, governorateName
- */
+// Advanced search filters
 export interface CitizenSearchFilters {
   firstName?: string;
   lastName?: string;
@@ -147,6 +153,7 @@ export interface CitizenSearchFilters {
   governorateName?: string;
 }
 
+// SEARCH: advanced search
 export async function searchCitizens(filters: CitizenSearchFilters) {
   let sql = `
     SELECT cg.*,
@@ -159,6 +166,7 @@ export async function searchCitizens(filters: CitizenSearchFilters) {
     LEFT JOIN governorate g ON d.governorate_id = g.governorate_id
     WHERE 1=1
   `;
+
   const values: any[] = [];
   let idx = 1;
 

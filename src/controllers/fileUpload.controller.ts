@@ -5,12 +5,9 @@ import fs from 'fs';
 import path from 'path';
 import { parse } from 'csv-parse';
 import * as xlsx from 'xlsx';
-
-// example: import your DB service
+// Example DB service (adjust the import if needed)
 import * as citizensService from '../services/citizens.service';
 
-// This interface might exist in your citizensService, or you can define it here.
-// We'll show it so the code compiles:
 export interface CitizenInput {
   firstName: string;
   lastName: string;
@@ -18,7 +15,6 @@ export interface CitizenInput {
   motherName?: string;
   dob: string;
   personalDoctrine?: string;
-  // gender is a union of 'Male' | 'Female' | 'Other'
   gender: 'Male' | 'Female' | 'Other';
   regNumber: string;
   doctrine?: string;
@@ -28,33 +24,35 @@ export interface CitizenInput {
   electionDistrict?: string;
 }
 
-// A helper to convert Arabic "الذكور"/"الإناث" to "Male"/"Female".
+// Helper to parse Arabic gender
 function parseGender(arabic: string): 'Male' | 'Female' | 'Other' {
   if (arabic === 'الذكور') return 'Male';
   if (arabic === 'الإناث') return 'Female';
   return 'Other';
 }
 
-// MAIN CONTROLLER
-export const uploadFileController: RequestHandler = async (req, res, next): Promise<void> => {
+export const uploadFileController: RequestHandler = async (req, res, next) => {
   try {
+    console.log('✅ [uploadFileController] Start handling file upload...');
+
     if (!req.file) {
+      console.log('❌ [uploadFileController] No file in request.');
       res.status(400).json({ error: 'No file uploaded' });
-      return;
+      return; // <--- Important: return after sending a response
     }
 
-    const filePath = req.file.path;
-    const originalName = req.file.originalname;
-    const ext = path.extname(originalName).toLowerCase();
+    console.log(`ℹ️ [uploadFileController] Uploaded file: ${req.file.originalname}`);
+
+    const filePath = req.file.path; // e.g. "uploads/abc123"
+    const ext = path.extname(req.file.originalname).toLowerCase(); // e.g. ".csv" or ".xlsx"
 
     let rowCount = 0;
     const errors: Array<{ row: number; error: string }> = [];
 
     if (ext === '.csv') {
-      // CSV logic
+      console.log('ℹ️ [uploadFileController] Detected CSV file. Parsing...');
+
       await handleCsvFile(filePath, errors, async (record) => {
-        // record => e.g. { "الاسم": "سليمه", "الشهرة": "دبوسي", ... }
-        // We map them to your CitizenInput structure:
         const citizenData: CitizenInput = {
           firstName: record['الاسم'] || 'Unknown',
           lastName: record['الشهرة'] || 'Unknown',
@@ -71,15 +69,16 @@ export const uploadFileController: RequestHandler = async (req, res, next): Prom
           electionDistrict: record['الدائرة الانتخابية'] || ''
         };
 
+        // Insert into DB
         await citizensService.createCitizen(citizenData);
       }).then((count) => {
         rowCount = count;
       });
 
     } else if (ext === '.xlsx' || ext === '.xls') {
-      // Excel logic
+      console.log('ℹ️ [uploadFileController] Detected Excel file. Parsing...');
+
       rowCount = await handleExcelFile(filePath, errors, async (rowObj) => {
-        // rowObj => e.g. { "الاسم": "سليمه", "الشهرة": "دبوسي", ... }
         const citizenData: CitizenInput = {
           firstName: rowObj['الاسم'] || 'Unknown',
           lastName: rowObj['الشهرة'] || 'Unknown',
@@ -95,37 +94,34 @@ export const uploadFileController: RequestHandler = async (req, res, next): Prom
           governorate: rowObj['المحافظة'] || '',
           electionDistrict: rowObj['الدائرة الانتخابية'] || ''
         };
-
         await citizensService.createCitizen(citizenData);
       });
     } else {
-      // unknown file type
+      console.log('❌ [uploadFileController] Unsupported file type!');
       fs.unlink(filePath, () => {});
       res.status(400).json({ error: 'Unsupported file type' });
-      return;
+      return; // <--- return after responding
     }
 
-    // remove temp file
-    fs.unlink(filePath, () => {});
+    // Remove temp file
+    fs.unlink(filePath, () => {
+      console.log('ℹ️ [uploadFileController] Temp file removed.');
+    });
 
-    // success response
+    // success
+    console.log(`✅ [uploadFileController] Upload complete. Rows processed: ${rowCount}`);
     res.json({
       message: 'Upload complete',
       fileType: ext,
       totalRows: rowCount,
       errors
     });
+    return; // <--- return after responding
   } catch (err) {
     next(err);
   }
 };
 
-/**
- * handleCsvFile
- * parse CSV line by line with csv-parse,
- * calls rowHandler(record) for each row,
- * returns how many rows we processed
- */
 async function handleCsvFile(
   filePath: string,
   errors: Array<{ row: number; error: string }>,
@@ -134,6 +130,7 @@ async function handleCsvFile(
   return new Promise<number>((resolve, reject) => {
     let rowCount = 0;
     const fileStream = fs.createReadStream(filePath);
+
     const parser = fileStream.pipe(parse({ columns: true, trim: true }));
 
     parser.on('data', (record: Record<string, string>) => {
@@ -153,10 +150,6 @@ async function handleCsvFile(
   });
 }
 
-/**
- * handleExcelFile
- * parse XLS/XLSX using xlsx, row 0 = headers, subsequent = data
- */
 async function handleExcelFile(
   filePath: string,
   errors: Array<{ row: number; error: string }>,
@@ -170,8 +163,9 @@ async function handleExcelFile(
   if (jsonData.length < 2) {
     return 0;
   }
-  const headers = jsonData[0].map((h: any) => (h || '').toString().trim());
 
+  // The first row is headers
+  const headers = jsonData[0].map((h: any) => (h || '').toString().trim());
   let rowCount = 0;
 
   for (let i = 1; i < jsonData.length; i++) {
@@ -179,13 +173,12 @@ async function handleExcelFile(
     if (!Array.isArray(row) || row.length === 0) {
       continue;
     }
+
     rowCount++;
 
-    // build an object: Arabic header => cell value
     const rowObj: Record<string, string> = {};
     for (let col = 0; col < headers.length; col++) {
       const header = headers[col];
-      // e.g. "الاسم", "الشهرة", ...
       rowObj[header] = row[col] ? row[col].toString() : '';
     }
 

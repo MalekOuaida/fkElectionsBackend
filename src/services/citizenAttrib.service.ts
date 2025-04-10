@@ -5,7 +5,7 @@
  ****************************************************************************/
 import pool from '../config/db';
 
-// Interface la input 3ashan create fi citizen_attrib
+// Interface la input kermel create fi citizen_attrib
 export interface CitizenAttribInput {
   citizensGovId: number;
   bloodTypeId?: number;

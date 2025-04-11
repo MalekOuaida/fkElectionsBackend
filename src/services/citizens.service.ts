@@ -10,7 +10,7 @@ export interface CitizenInput {
   lastName: string;
   fatherName?: string;
   motherName?: string;
-  dob: string; // e.g. 'YYYY-MM-DD'
+  dob: string;
   personalDoctrine?: string;
   gender: 'Male' | 'Female' | 'Other';
   regNumber: string;
